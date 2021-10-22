@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import Home from "./pages/Home/Home";
+import Quiz from "./pages/Quiz/Quiz";
+import Result from "./pages/Result/Result";
+import api from "./providers/api";
+import axios from 'axios'
 
-function App() {
+export default function App() {
+  const [name, setName] = useState("");
+  const [questions, setQuestions] = useState();
+  const [score, setScore] = useState(0);
+
+  const fetchQuestions = async (amount) => {
+    const { data } = await axios.get(`https://opentdb.com/api.php?amount=${amount}&type=multiple`);
+
+    setQuestions(data.results);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        <Route path="/" exact>
+          <Home name={name} setName={setName} fetchQuestions={fetchQuestions} />
+        </Route>
+        <Route path="/quiz" exact>
+          <Quiz
+            name={name}
+            questions={questions}
+            score={score}
+            setScore={setScore}
+            setQuestions={setQuestions}
+          />
+        </Route>
+        <Route path="/result" exact>
+          <Result />
+        </Route>
+      </Switch>
+    </BrowserRouter>
   );
 }
-
-export default App;
