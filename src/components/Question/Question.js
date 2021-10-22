@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Grid, Paper, Typography, Box } from "@mui/material";
+import { Grid, Paper, Typography, Box, Button } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -24,25 +25,25 @@ const Question = ({
   setScore,
   setQuestions,
 }) => {
+  const history = useHistory();
   const classes = useStyles();
   const [selected, setSelected] = useState();
   const [error, setError] = useState(false);
 
-  const handleSelected = (answer) => {
-    if (selected === answer && selected === correct) {
-      return "select";
-    } else if (selected === answer && selected !== correct) {
-      return "wrong";
-    } else if (answer === correct) {
-        return 'select';
-    }
+  const handleCheck = (answer) => {
+    setSelected(answer);
+    if (answer === correct) setScore(score++);
+    setError(false);
+    
+      nextQuestion();
   };
 
-  const handleCheck = (answer) => {
-      setSelected(answer);
-      if(answer === correct) setScore(score++);
-      setError(false);
-      console.log(score)
+  function nextQuestion() {
+    if(currQues + 1 === questions.length){
+      history.push('/result');
+    }else{
+    setCurrQues(currQues + 1);
+    }
   }
 
   return (
@@ -69,17 +70,28 @@ const Question = ({
                 textAlign: "center",
                 "& > :hover": { opacity: 0.9, cursor: "pointer" },
               }}
-              className={`SingleOption ${selected && handleSelected(answers)}`}
               onClick={() => {
                 handleCheck(answers);
               }}
               key={index}
               disabled={selected}
             >
-              <Paper className={classes.paper}>{answers}{index}</Paper>
+              <Paper className={classes.paper}>{answers}</Paper>
             </Grid>
           ))}
       </Grid>
+      <Button
+        variant="contained"
+        size="large"
+        onClick={() => {
+          history.push("/");
+        }}
+        sx={{
+          width: "50%",
+        }}
+      >
+        Quit
+      </Button>
     </>
   );
 };
