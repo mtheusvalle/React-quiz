@@ -1,3 +1,4 @@
+import React, {useEffect} from 'react';
 import { Grid, Paper, Box, Typography, Button, TextField } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import imgQuiz from "../../assets/quiz.png";
@@ -28,12 +29,19 @@ const useStyles = makeStyles((theme) => ({
   },
   imgQuiz: {
     width: "45%",
-  },
+  }
 }));
 
-const Home = ({ name, setName, fetchQuestions }) => {
+const Home = ({ name, setName, fetchQuestions, setScore }) => {
   const classes = useStyles();
   const history = useHistory();
+
+  useEffect(() => {
+    setScore(0);
+    localStorage.removeItem('Username')
+    localStorage.removeItem('answers')
+    localStorage.removeItem('Score')
+  }, [])
 
   const formik = useFormik({
     initialValues: {
@@ -43,19 +51,14 @@ const Home = ({ name, setName, fetchQuestions }) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       setName(values.name);
+      localStorage.setItem('Username', values.name);
       fetchQuestions(values.amount);
       history.push("/quiz");
     }
   });
 
   return (
-    <Grid
-      container
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-      style={{ minHeight: "100vh", gap: "20px" }}
-    >
+    
       <Paper className={classes.paper}>
         <img src={imgQuiz} alt="Quiz Logo" className={classes.imgQuiz} />
         <Typography variant="h4" sx={{ marginBottom: 2 }}>
@@ -108,7 +111,7 @@ const Home = ({ name, setName, fetchQuestions }) => {
           </Box>
         </form>
       </Paper>
-    </Grid>
+    
   );
 };
 

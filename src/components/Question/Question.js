@@ -32,17 +32,27 @@ const Question = ({
 
   const handleCheck = (answer) => {
     setSelected(answer);
-    if (answer === correct) setScore(score++);
+    if (answer === correct) setScore(score + 1);
+    console.log(score)
     setError(false);
+    saveLocalStorage(answer);
     
-      nextQuestion();
+    nextQuestion();
   };
 
+  const saveLocalStorage = (answer) => {
+    var arrayAnswers = JSON.parse(localStorage.getItem("answers") || "[]");
+    var answerResponse = [(questions[currQues].question), correct, answer];
+    arrayAnswers.push(answerResponse)
+    localStorage.setItem("answers", JSON.stringify(arrayAnswers));
+  }
+
   function nextQuestion() {
-    if(currQues + 1 === questions.length){
-      history.push('/result');
-    }else{
-    setCurrQues(currQues + 1);
+    if (currQues + 1 === questions.length) {
+      localStorage.setItem('Score', score);
+      history.push("/result");
+    } else {
+      setCurrQues(currQues + 1);
     }
   }
 
